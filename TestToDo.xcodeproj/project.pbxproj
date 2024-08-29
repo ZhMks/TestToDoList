@@ -14,9 +14,6 @@
 		B28FC5C62C7DBA00001DD74E /* TestToDo.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B28FC5C42C7DBA00001DD74E /* TestToDo.xcdatamodeld */; };
 		B28FC5C82C7DBA02001DD74E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B28FC5C72C7DBA02001DD74E /* Assets.xcassets */; };
 		B28FC5CB2C7DBA02001DD74E /* Base in Resources */ = {isa = PBXBuildFile; fileRef = B28FC5CA2C7DBA02001DD74E /* Base */; };
-		B28FC5D62C7DBA02001DD74E /* TestToDoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FC5D52C7DBA02001DD74E /* TestToDoTests.swift */; };
-		B28FC5E02C7DBA02001DD74E /* TestToDoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FC5DF2C7DBA02001DD74E /* TestToDoUITests.swift */; };
-		B28FC5E22C7DBA02001DD74E /* TestToDoUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FC5E12C7DBA02001DD74E /* TestToDoUITestsLaunchTests.swift */; };
 		B28FC5F02C7DBAE6001DD74E /* MainScreenInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FC5EF2C7DBAE6001DD74E /* MainScreenInteractor.swift */; };
 		B28FC5F22C7DBAF1001DD74E /* MainScreenPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FC5F12C7DBAF1001DD74E /* MainScreenPresenter.swift */; };
 		B28FC5F42C7DBB00001DD74E /* MainScreenRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FC5F32C7DBB00001DD74E /* MainScreenRouter.swift */; };
@@ -57,10 +54,7 @@
 		B28FC5CA2C7DBA02001DD74E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B28FC5CC2C7DBA02001DD74E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B28FC5D12C7DBA02001DD74E /* TestToDoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestToDoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B28FC5D52C7DBA02001DD74E /* TestToDoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestToDoTests.swift; sourceTree = "<group>"; };
 		B28FC5DB2C7DBA02001DD74E /* TestToDoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestToDoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B28FC5DF2C7DBA02001DD74E /* TestToDoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestToDoUITests.swift; sourceTree = "<group>"; };
-		B28FC5E12C7DBA02001DD74E /* TestToDoUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestToDoUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		B28FC5EF2C7DBAE6001DD74E /* MainScreenInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenInteractor.swift; sourceTree = "<group>"; };
 		B28FC5F12C7DBAF1001DD74E /* MainScreenPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenPresenter.swift; sourceTree = "<group>"; };
 		B28FC5F32C7DBB00001DD74E /* MainScreenRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenRouter.swift; sourceTree = "<group>"; };
@@ -102,8 +96,6 @@
 			isa = PBXGroup;
 			children = (
 				B28FC5BA2C7DBA00001DD74E /* TestToDo */,
-				B28FC5D42C7DBA02001DD74E /* TestToDoTests */,
-				B28FC5DE2C7DBA02001DD74E /* TestToDoUITests */,
 				B28FC5B92C7DBA00001DD74E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -133,23 +125,6 @@
 				B28FC5C42C7DBA00001DD74E /* TestToDo.xcdatamodeld */,
 			);
 			path = TestToDo;
-			sourceTree = "<group>";
-		};
-		B28FC5D42C7DBA02001DD74E /* TestToDoTests */ = {
-			isa = PBXGroup;
-			children = (
-				B28FC5D52C7DBA02001DD74E /* TestToDoTests.swift */,
-			);
-			path = TestToDoTests;
-			sourceTree = "<group>";
-		};
-		B28FC5DE2C7DBA02001DD74E /* TestToDoUITests */ = {
-			isa = PBXGroup;
-			children = (
-				B28FC5DF2C7DBA02001DD74E /* TestToDoUITests.swift */,
-				B28FC5E12C7DBA02001DD74E /* TestToDoUITestsLaunchTests.swift */,
-			);
-			path = TestToDoUITests;
 			sourceTree = "<group>";
 		};
 		B28FC5EE2C7DBAB1001DD74E /* MainScreen */ = {
@@ -376,7 +351,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B28FC5D62C7DBA02001DD74E /* TestToDoTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,8 +358,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B28FC5E22C7DBA02001DD74E /* TestToDoUITestsLaunchTests.swift in Sources */,
-				B28FC5E02C7DBA02001DD74E /* TestToDoUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
