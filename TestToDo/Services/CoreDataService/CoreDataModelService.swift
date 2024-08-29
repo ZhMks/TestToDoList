@@ -2,11 +2,14 @@ import Foundation
 
 enum CustomError: Error {
     case failedSave
+    case failedToDelete
 
     var descritpion: String {
         switch self {
         case .failedSave:
             return "Не удалось сохранить модель"
+        case .failedToDelete:
+            return "Не удалось удалить модель"
         }
     }
 }
@@ -30,8 +33,25 @@ final class CoreDataModelService {
         }
     }
 
-    func save(text: String, date: Date?, isCompleted: Bool, name: String?, completion: @escaping (Result<ToDoModel, CustomError>) -> Void) {
-        if checkExistedModel(text: text) {
+    func initialSave(_ model: MainResponseModel, name: String?, completion: @escaping (Result<Bool, CustomError>) -> Void) {
+        for todoModel in model.todoModel {
+            if checkExistedModel(text: todoModel.text) {
+                return
+            } else {
+                let newModelToSave = ToDoModel(context: coreDataService.context)
+                newModelToSave.name = name == nil ? "Новая задача": name
+                newModelToSave.text = todoModel.text
+                newModelToSave.date = todoModel.data
+                newModelToSave.isCompleted = todoModel.isCompleted
+            }
+        }
+        coreDataService.saveContext()
+        initalFetch()
+        completion(.success(true))
+    }
+
+    func addNewToDoModel(name: String?, text: String?, isCompleted: Bool, date: Date) {
+        if checkExistedModel(text: text!) {
             return
         } else {
             let newModelToSave = ToDoModel(context: coreDataService.context)
@@ -40,13 +60,11 @@ final class CoreDataModelService {
             newModelToSave.date = date
             newModelToSave.isCompleted = isCompleted
             coreDataService.saveContext()
-            completion(.success(newModelToSave))
+            initalFetch()
         }
-        initalFetch()
     }
 
     func checkExistedModel(text: String) -> Bool {
-        print(text)
         guard let modelsArray = self.modelsArray else { return false }
         if modelsArray.isEmpty {
             return false
@@ -60,19 +78,36 @@ final class CoreDataModelService {
         return false
     }
 
-    func update(coredataModel: ToDoModel, text: String) {
+    func update(coredataModel: ToDoModel, text: String?, name: String?, isCompleted: Bool) {
         guard let modelsArray = self.modelsArray else { return }
-        guard let firstModel = modelsArray.first(where: { $0.text == coredataModel.text }) else { return }
-        firstModel.text = text
+        guard let firstModel = modelsArray.first(where: { $0 === coredataModel }) else { return }
+
+        if let text = text, !text.isEmpty {
+            firstModel.text = text
+        }
+
+        if let name = name, !name.isEmpty {
+            firstModel.name = name
+        }
+
+        firstModel.isCompleted = isCompleted
+
         coreDataService.saveContext()
         initalFetch()
     }
 
-    func delete(model: TodoModel) {
-        guard let index = modelsArray?.firstIndex(where: { $0.text == model.text }) else { return }
-        modelsArray?.remove(at: index)
-        coreDataService.saveContext()
-        initalFetch()
+    func delete(model: ToDoModel, completion: (Result<Bool, CustomError>) -> Void) {
+        coreDataService.deleObject(model: model) { result in
+            switch result {
+            case .success(_):
+                coreDataService.saveContext()
+                initalFetch()
+                completion(.success(true))
+            case .failure(let failure):
+                assertionFailure(failure.localizedDescription)
+                completion(.failure(.failedToDelete))
+            }
+        }
     }
 
 }

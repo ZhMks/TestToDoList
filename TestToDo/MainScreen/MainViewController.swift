@@ -26,11 +26,11 @@ class MainScreenViewController: UIViewController {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -73,11 +73,12 @@ class MainScreenViewController: UIViewController {
 
     private func tuneNavItem() {
         let rightButton = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addNewToDoItem(_:)))
+        title = "Главная"
         navigationItem.rightBarButtonItem = rightButton
     }
 
     @objc func addNewToDoItem(_ sender: UIBarButtonItem) {
-        presenter.showCreateTodoView()
+        presenter.showCreateTodoView(state: .create)
     }
 }
 
@@ -85,7 +86,16 @@ class MainScreenViewController: UIViewController {
 
 // MARK: - Presenter Output
 extension MainScreenViewController: IMainScreenView {
-    
+
+    func animateCell() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.mainToDoTable.setEditing(true, animated: true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.mainToDoTable.setEditing(false, animated: true)
+            }
+        }
+    }
+
     func startAnimating() {
         view.addSubview(activityIndicator)
         let safeAre = view.safeAreaLayoutGuide
@@ -97,16 +107,22 @@ extension MainScreenViewController: IMainScreenView {
 
         activityIndicator.startAnimating()
     }
-    
+
     func stopAnimating() {
         DispatchQueue.main.async {
             self.activityIndicator.stopAnimating()
         }
     }
-    
 
-    func showCreateView() {
-        let todoView = UIAlertController(title: "Создать активность", message: "Укажите название", preferredStyle: .alert)
+
+    func showAlertView(state: AlertViewState, model: ToDoModel?) {
+        let todoView = UIAlertController(title: "", message: "Укажите название", preferredStyle: .alert)
+        switch state {
+        case .create:
+            todoView.title = "Создать активность"
+        case .update:
+            todoView.title = "Обновить активность"
+        }
         todoView.addTextField { textfield in
             textfield.placeholder = "Введите название"
         }
@@ -114,10 +130,16 @@ extension MainScreenViewController: IMainScreenView {
         todoView.addTextField { textField in
             textField.placeholder = "Введите задание"
         }
-        
+
         let action = UIAlertAction(title: "Запланировать", style: .default) { [weak self] action in
-            guard let firstTextField = todoView.textFields?.first, let secondTextfield = todoView.textFields?.last, let taskName = firstTextField.text, let taskText = secondTextfield.text , !taskName.isEmpty, !taskText.isEmpty else { return }
-            self?.presenter.addNewTask(text: taskText, name: taskName)
+            guard let firstTextField = todoView.textFields?.first, let secondTextfield = todoView.textFields?.last, let taskName = firstTextField.text, let taskText = secondTextfield.text else { return }
+            switch state {
+            case .create:
+                self?.presenter.addNewTask(text: taskText, name: taskName)
+            case .update:
+                guard let model = model else { return }
+                self?.presenter.updateModel(model, text: taskText, name: taskName)
+            }
         }
 
         let cancellAction = UIAlertAction(title: "Отмена", style: .destructive)
@@ -125,7 +147,7 @@ extension MainScreenViewController: IMainScreenView {
         todoView.addAction(cancellAction)
         navigationController?.present(todoView, animated: true)
     }
-    
+
     func updateData() {
         DispatchQueue.main.async {
             self.mainToDoTable.reloadData()
@@ -149,14 +171,15 @@ extension MainScreenViewController: UITableViewDataSource {
         guard let number = presenter.coredataDatasource?.count else { return 0 }
         return number
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: MainScreenTableCell.identifier, for: indexPath) as? MainScreenTableCell else { return UITableViewCell() }
         guard let dataForCell = presenter.coredataDatasource?[indexPath.row] else { return UITableViewCell() }
         cell.updateCellWithCoredataModel(model: dataForCell)
+        cell.delegate = self
         return cell
     }
-    
+
 
 }
 
@@ -165,6 +188,38 @@ extension MainScreenViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
+
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+
+        let deleteAction = UIContextualAction(style: .normal, title: "Удалить") {[weak self] (action, view, bool) in
+            guard let model = self?.presenter.coredataDatasource?[indexPath.row] else { return }
+            self?.presenter.deleteModel(model)
+        }
+        deleteAction.backgroundColor = .systemRed
+
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+
+        let updateAction = UIContextualAction(style: .normal, title: "Обновить") {[weak self] (action, view, bool) in
+            guard let model = self?.presenter.coredataDatasource?[indexPath.row] else { return }
+            self?.showAlertView(state: .update, model: model)
+        }
+        updateAction.backgroundColor = .systemBlue
+
+        return UISwipeActionsConfiguration(actions: [updateAction])
+    }
+}
+
+// MARK - TableViewCell Delegate
+extension MainScreenViewController: IDidTapButton {
+    func didTapButton(_ model: ToDoModel?) {
+        guard let model = model else { return }
+        presenter.updateModel(model, text: nil, name: nil)
+    }
+    
+
 }
 
 

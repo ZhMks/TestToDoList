@@ -32,7 +32,15 @@ final class CoreDataService {
         }
     }
 
-    func deleObject(model: TodoModel) {
-        
+    func deleObject(model: ToDoModel, completion: (Result<Bool, Error>) -> Void) {
+        do {
+            let objectToDelete = try context.existingObject(with: model.objectID)
+            context.delete(objectToDelete)
+            try context.save()
+            completion(.success(true))
+        } catch {
+            print("Failed to delete object: \(error.localizedDescription)")
+            completion(.failure(error))
+        }
     }
 }
